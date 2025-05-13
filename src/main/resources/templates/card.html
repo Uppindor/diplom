@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль</title>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" th:href="@{/css/main_my_project.css}" />
+    <style>
+        .sidebar input, .sidebar textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+        }
+
+        .heart-badge {
+            background-color: red;
+            color: white;
+            padding: 5px;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        /* Новые стили для карточек, чтобы они располагались одна за другой */
+        .card {
+            margin-bottom: 20px; /* Расстояние между карточками */
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-stack {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 500px;
+    margin: 40px auto 0; /* верх: 40px, авто по бокам, низ: 0 */
+
+        }
+
+        .card-stack .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            box-sizing: border-box;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        .icon-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            gap: 6px;
+            transition: background-color 0.2s;
+        }
+        .icon-btn:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header with buttons -->
+<div class="header">
+    <div class="header-left"></div>
+    <div class="header-center">
+        <a href="/profile" class="icon-btn" aria-label="Профиль" role="button">
+            <span>Профиль</span>
+            <i data-lucide="user"></i>
+        </a>
+        <a th:href="@{'/chat/' + ${currentUsername}}" class="icon-btn" aria-label="Сообщения" role="button">
+            <span>Сообщения</span>
+            <i data-lucide="message-circle"></i>
+        </a>
+        <a href="/likes" class="icon-btn" role="button">
+            <span>Знакомства</span>
+        </a>
+        <a href="/setting" class="icon-btn" aria-label="Настройки" role="button">
+            <span>Настройки</span>
+            <i data-lucide="settings"></i>
+        </a>
+    </div>
+    <div class="header-right"></div>
+</div>
+
+<!-- Profile Card -->
+<div class="card-stack" id="cardStack">
+    <div class="card" th:each="user, iterStat : ${users}"
+         th:data-user-id="${user.id}"
+         th:style="'z-index:' + (${users.size()} - ${iterStat.index})">
+        <img th:if="${user.images.?[main].size() > 0}"
+             th:src="@{'/image/' + ${user.images.?[main].get(0).id}}"
+             alt="Фото профиля" width="100%">
+        <h2 th:text="${user.username}">Имя</h2>
+        <p th:text="'Возраст: ' + ${user.age}"></p>
+
+        <!-- Скрытые формы для отправки лайка/дизлайка -->
+        <form th:action="@{/card/like/{id}(id=${user.id})}" method="post" class="like-form"></form>
+        <form th:action="@{/card/pass/{id}(id=${user.id})}" method="post" class="pass-form"></form>
+        <div class="controls text-center mt-4">
+            <button onclick="handleSwipe('left')" class="btn btn-danger mx-2">👎 Пропустить</button>
+            <button onclick="handleSwipe('right')" class="btn btn-success mx-2">👍 Лайк</button>
+        </div>
+        <button onclick="toggleSidebar()">О себе</button>
+    </div>
+</div>
+
+<div th:if="${#lists.isEmpty(users)}">
+    <h3>Новых анкет пока нет 😢</h3>
+</div>
+
+
+    <!-- Sidebar remains the same -->
+    <div class="sidebar" id="sidebar" th:each="user, iterStat : ${users}"
+         th:data-user-id="${user.id}"
+         th:style="'z-index:' + (${users.size()} - ${iterStat.index})">
+        <h3>О себе</h3>
+        <textarea id="about" text="about">Краткая информация о себе.</textarea>
+
+        <h3>Работа</h3>
+        <input type="text" id="work" th:value="${user.work}" placeholder="Место работы, должность.">
+
+        <h3>Образование</h3>
+        <input type="text" id="education" th:value="${user.education}" placeholder="Университет, факультет, год выпуска.">
+
+        <h3>Свободное время</h3>
+        <input type="text" id="hobbies" th:value="${user.hobbies}" placeholder="Чем увлекаетесь в свободное время.">
+
+        <h3>Личное</h3>
+        <input type="text" id="personal" th:value="${user.personal}" placeholder="Какие-то интересные личные факты.">
+
+        <h3>Музыка</h3>
+        <input type="text" id="music" th:value="${user.music}" placeholder="Любимые музыкальные жанры и исполнители.">
+
+        <button onclick="saveChanges()">Сохранить изменения</button>
+    </div>
+</div>
+
+<script>
+    // Toggle sidebar for profile editing
+    function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("open");
+    }
+
+    // Save the changes and close the sidebar
+    function saveChanges() {
+        let aboutText = document.getElementById("about").value;
+        let educationText = document.getElementById("education").value;
+        let workText = document.getElementById("work").value;
+        let hobbiesText = document.getElementById("hobbies").value;
+        let personalText = document.getElementById("personal").value;
+        let musicText = document.getElementById("music").value;
+
+        alert("Данные обновлены:\n\n" +
+            "О себе: " + aboutText + "\n" +
+            "Образование: " + educationText + "\n" +
+            "Работа: " + workText + "\n" +
+            "Свободное время: " + hobbiesText + "\n" +
+            "Личное: " + personalText + "\n" +
+            "Музыка: " + musicText
+        );
+
+        toggleSidebar(); // Close sidebar
+    }
+</script>
+<script>
+    const cards = document.querySelectorAll('.card-stack .card');
+ let current = cards.length - 1;  // Начинаем с последней карточки
+
+ function handleSwipe(direction) {
+     if (current < 0) return;
+
+     const card = cards[current];
+     const angle = direction === 'left' ? -30 : 30;
+     const x = direction === 'left' ? -1000 : 1000;
+
+     // Анимация
+     card.style.transform = `translateX(${x}px) rotate(${angle}deg)`;  // Перемещаем карточку
+     card.style.opacity = 0;  // Скрываем карточку
+
+     // Отправка формы после анимации
+     setTimeout(() => {
+         const form = card.querySelector(direction === 'left' ? '.pass-form' : '.like-form');
+         form.submit();
+     }, 400);
+
+     // Перемещаемся к следующей карточке
+     current--;
+ }
+
+</script>
+
+
+<script>
+    lucide.createIcons();  // Initialize icons
+</script>
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html lang="ru"  xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Карточки с Лайками</title>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/css_chat.css}" />
+  <style>
+    /* Основной стиль для карточек */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        padding: 80px 20px 40px; /* сверху 80px, снизу 40px */
+        display: flex;
+        justify-content: center;
+    }
+
+    .card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Стиль для контента карточки */
+    .card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .card p {
+        font-size: 1rem;
+        color: #777;
+        margin-bottom: 20px;
+    }
+
+    /* Стиль для кнопки лайка */
+    .like-btn {
+        background-color: #ff4d7e;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .like-btn:hover {
+        background-color: #ff6a5b;
+    }
+
+    .like-count {
+        font-size: 1rem;
+        color: #333;
+        margin-left: 10px;
+    }
+    .cards-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px; /* Было 20px — стало 40px */
+        width: 100%;
+        max-width: 1000px;
+    }
+    ```
+
+    @keyframes fadeInUp {
+    from {
+    opacity: 0;
+    transform: translateY(20px);
+    }
+    to {
+    opacity: 1;
+    transform: translateY(0);
+    }
+    }
+
+    .card {
+      opacity: 1 !important;
+    }
+    /\* Немного задержки между карточками \*/
+    .card\:nth-child(1) { animation-delay: 0.1s; }
+    .card\:nth-child(2) { animation-delay: 0.2s; }
+    .card\:nth-child(3) { animation-delay: 0.3s; }
+      .icon-btn {
+                display: inline-flex;
+                align-items: center;
+                padding: 8px 12px;
+                background-color: #f0f0f0;
+                border: none;
+                border-radius: 6px;
+                text-decoration: none;
+                color: inherit;
+                cursor: pointer;
+                gap: 6px;
+                transition: background-color 0.2s;
+            }
+            .icon-btn:hover {
+                background-color: #e0e0e0;
+            }
+  </style>
+</head>
+<div class="header">
+  <div class="header-left"></div>
+  <div class="header-center">
+    <a href="/profile" class="icon-btn" aria-label="Профиль" role="button">
+      <span>Профиль</span>
+      <i data-lucide="user"></i>
+    </a>
+    <a th:href="@{'/chat/' + ${currentUsername}}" class="icon-btn" aria-label="Сообщения" role="button">
+      <span>Сообщения</span>
+      <i data-lucide="message-circle"></i>
+    </a>
+    <a href="/likes" class="icon-btn" role="button">
+      <span>Знакомства</span>
+    </a>
+    <a href="/setting" class="icon-btn" aria-label="Настройки" role="button">
+      <span>Настройки</span>
+      <i data-lucide="settings"></i>
+    </a>
+  </div>
+  <div class="header-right"></div>
+</div>
+<div class="cards-container">
+  <div class="card" th:each="user : ${incomingUsers}">
+    <img th:if="${user.images.?[main].size() > 0}"
+         th:src="@{'/image/' + ${user.images.?[main].get(0).id}}"
+         alt="Фото профиля" width="100%">
+    <h3 th:text="${user.username}">Имя пользователя</h3>
+    <p>Этот пользователь поставил вам лайк. Хотите ответить?</p>
+    <div style="display: flex; gap: 10px;">
+      <form th:action="@{/likes/respond}" method="post">
+        <input type="hidden" name="targetUserId" th:value="${user.id}" />
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button class="like-btn" type="submit" name="liked" value="true">
+          <i class="fa fa-thumbs-up"></i> Лайк
+        </button>
+      </form>
+      <form th:action="@{/likes/respond}" method="post">
+        <input type="hidden" name="targetUserId" th:value="${user.id}" />
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button class="like-btn" type="submit" name="liked" value="false" style="background-color: gray;">
+          <i class="fa fa-thumbs-down"></i> Дизлайк
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  // Функция для увеличения количества лайков
+  function incrementLike(cardIndex) {
+      const likeCountElement = document.getElementById(`like-count-${cardIndex}`);
+      let currentLikeCount = parseInt(likeCountElement.textContent);
+      likeCountElement.textContent = currentLikeCount + 1;
+  }
+</script>
+</body>
+</html>

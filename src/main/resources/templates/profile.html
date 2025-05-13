@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль</title>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" th:href="@{/css/main_my_project.css}" />
+    <style>
+        .sidebar input, .sidebar textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .heart {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+        }
+        .heart-badge {
+            background-color: red;
+            color: white;
+            padding: 5px;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+ /* Убираем стандартные рамки и делаем их круглыми */
+    textarea, input {
+        border-radius: 15px; /* Скругляем углы */
+        padding: 10px;
+        border: 1px solid #ccc; /* Стандартная рамка */
+    }
+
+    /* Запрещаем изменение размера textarea */
+    textarea {
+        resize: none;
+    }
+    textarea, input {
+        border-radius: 15px; /* Скругляем углы */
+        padding: 10px;
+        border: 1px solid #ccc; /* Стандартная рамка */
+        width: 100%; /* Полная ширина для текстовых полей */
+        box-sizing: border-box; /* Чтобы padding не выходил за пределы */
+    }
+
+    /* Запрещаем изменение размера textarea */
+    textarea {
+        resize: none;
+    }
+
+    /* Стиль для кнопки "Сохранить изменения" */
+    .save-button {
+        background: linear-gradient(135deg, #ff61a6, #ff007f); /* Розовый градиент */
+        color: white;
+        border: none; /* Убираем стандартную рамку */
+        padding: 12px 24px; /* Паддинг для кнопки */
+        cursor: pointer; /* Курсор в виде руки */
+        font-size: 16px;
+        border-radius: 25px; /* Скругляем только эту кнопку */
+        display: block;
+        margin-top: 15px; /* Отступ сверху */
+    }
+
+    .save-button:hover {
+        background: linear-gradient(135deg, #ff007f, #ff61a6); /* Инвертируем градиент при наведении */
+    }
+
+
+
+    </style>
+</head>
+<body>
+
+<!-- Header with buttons -->
+<div class="header">
+    <div class="header-left"></div>
+    <div class="header-center">
+        <a href="/profile" class="icon-btn" aria-label="Профиль" role="button">
+            <span>Профиль</span>
+            <i data-lucide="user"></i>
+        </a>
+        <a th:href="@{'/chat/' + ${currentUsername}}" class="icon-btn" aria-label="Сообщения" role="button">
+            <span>Сообщения</span>
+            <i data-lucide="message-circle"></i>
+        </a>
+        <a href="/likes" class="icon-btn" role="button">
+            <span>Знакомства</span>
+        </a>
+        <a href="/setting" class="icon-btn" aria-label="Настройки" role="button">
+            <span>Настройки</span>
+            <i data-lucide="settings"></i>
+        </a>
+    </div>
+    <div class="header-right"></div>
+</div>
+<!-- Profile Card -->
+<div class="container">
+    <div class="card" th:each="user : ${users}">
+
+        <img th:if="${user.images.?[main].size() > 0}"
+             th:src="@{'/image/' + ${user.images.?[main].get(0).id}}"
+             alt="Фото профиля" width="100%">
+
+        <!--<img th:src="${#lists.contains(user.images.?[isMain == true], true) ? '/image/'+ user.images.?[isMain == true][0].id : '/static/image/1.png'}"
+             alt="Фото профиля" width="100">-->
+        <h2 id="username" th:text="${user.username}">Имя </h2>
+        <p id="age" th:text="'Возраст: ' + ${user.age}">Возраст: 0</p>
+
+        <!-- Поле ввода возраста для редактирования -->
+
+
+        <button  class="save-button" onclick="toggleSidebar()">Редактировать профиль</button>
+    </div>
+
+    <!-- Sidebar to edit profile -->
+    <div class="sidebar" id="sidebar">
+        <form th:action="@{/profile}" method="post" th:object="${userProfileDto}" enctype="multipart/form-data">
+            <input type="file" class="form-control" placeholder="" name="image" id="image" >
+            <textarea th:field="*{bio}" placeholder="Краткая информация о себе."></textarea>
+            <input type="text" th:field="*{education}" placeholder="Университет, факультет, год выпуска.">
+            <input type="text" th:field="*{work}" placeholder="Место работы, должность.">
+            <input type="text" th:field="*{hobbies}" placeholder="Чем увлекаетесь в свободное время.">
+            <input type="text" th:field="*{personal}" placeholder="Какие-то интересные личные факты.">
+            <input type="text" th:field="*{music}" placeholder="Любимые музыкальные жанры и исполнители.">
+            <input type="number" th:field="*{age}" placeholder="Введите возраст" min="1"/>
+            <button type="submit" class="save-button">Сохранить изменения</button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    // Toggle sidebar for profile editing
+    function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("open");
+    }
+
+    // Save the changes and close the sidebar
+    function saveChanges() {
+        let aboutText = document.getElementById("about").value;
+        let educationText = document.getElementById("education").value;
+        let workText = document.getElementById("work").value;
+        let hobbiesText = document.getElementById("hobbies").value;
+        let personalText = document.getElementById("personal").value;
+        let musicText = document.getElementById("music").value;
+
+        alert("Данные обновлены:\n\n" +
+            "О себе: " + aboutText + "\n" +
+            "Образование: " + educationText + "\n" +
+            "Работа: " + workText + "\n" +
+            "Свободное время: " + hobbiesText + "\n" +
+            "Личное: " + personalText + "\n" +
+            "Музыка: " + musicText
+        );
+
+        toggleSidebar(); // Close sidebar
+    }
+</script>
+
+<!-- Heart Icon and Badge -->
+<!--<div class="heart">
+    <div class="heart-badge" th:text="${user.matchCount}">5</div>
+</div>-->
+
+<script>
+    lucide.createIcons();  // Initialize icons
+</script>
+
+<script>
+    // Swipe logic for profile cards (optional if you need sliding)
+    let cards = document.querySelectorAll('.card');
+    let currentCard = 0;
+
+    function swipeLeft() {
+        if (currentCard < cards.length) {
+            cards[currentCard].style.transform = 'translateX(-1000px) rotate(-45deg)';
+            cards[currentCard].style.opacity = 0;
+            nextCard();
+        }
+    }
+
+    function swipeRight() {
+        if (currentCard < cards.length) {
+            cards[currentCard].style.transform = 'translateX(1000px) rotate(45deg)';
+            cards[currentCard].style.opacity = 0;
+            nextCard();
+        }
+    }
+
+    function nextCard() {
+        currentCard++;
+        if (currentCard >= cards.length) {
+            currentCard = 0;
+            cards.forEach(card => {
+                card.style.opacity = 1;
+                card.style.transform = '';
+            });
+        }
+    }
+</script>
+
+</body>
+</html>

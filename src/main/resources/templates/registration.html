@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+<link rel="stylesheet" th:href="@{/css/login_reg.css}" />
+<style>
+
+</style>
+
+<div class="bform py-5">
+  <!-- success message -->
+  <div th:if="${param.success}">
+    <div class="alert alert-info">You've successfully registered
+      to our awesome app!</div>
+  </div>
+
+  <div th:if="${param.email_invalid}">
+    <div class="alert alert-danger">
+      Email is Already Registered!</div>
+  </div>
+  <!-- Row -->
+  <form th:action="@{/registration}" method="post"
+        th:object="${user}">
+    <div class="row">
+      <div class="container">
+        <div class="col-lg-6 align-justify-center pr-4 pl-0 contact-form">
+          <div class="">
+            <h2 class="mb-3 font-weight-light">Регистрация</h2>
+            <form method="post" class="mt-3">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="form-group" for="name">
+                    <input class="form-control" type="text" id="username" placeholder="Полное имя" name="username">
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="form-group" for="email">
+                    <input class="form-control" type="email" id="email" placeholder="Электронная почта" name="email">
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group"  for="password">
+                    <input class="form-control" type="password" id="password" placeholder="Пароль" name="password">
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <input class="form-control" type="password" placeholder="Повторите пароль">
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <button type="submit" class="btn btn-md btn-block btn-danger-gradiant text-white border-0"><span>Создать Аккаунт</span></button>
+                  <!-- -->
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-lg-12 text-center mt-4">
+                У вас уже есть учетная запись? <a th:href="@{/login}" class="text-danger">Log in</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 right-image pl-3" >
+      </div>
+    </div>
+  </form>
+</div>
+</html>
+<script>
+  fetch('/auth/status')
+      .then(response => response.text())
+      .then(status => {
+          const authLink = document.getElementById('authLink');
+          if (status === 'authenticated') {
+              authLink.textContent = '?????';
+              authLink.href = '/logout';
+              authLink.addEventListener('click', function(event) {
+                  event.preventDefault();
+                  fetch('/logout', {
+                      method: 'POST',
+                      credentials: 'same-origin'
+                  }).then(() => {
+                      window.location.href = "/";
+                  });
+              });
+          }
+      });
+</script>

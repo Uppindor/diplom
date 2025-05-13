@@ -1,0 +1,269 @@
+@import url(//fonts.googleapis.com/css?family=Montserrat:300,400,500);
+        body {
+            font-family: "Montserrat", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 15px;
+            background: white;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            font-weight: 250;
+            color: #3e4555;
+            position: relative;
+        }
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-left {
+         display: flex;
+            position: absolute;
+            left: 20px;
+        }
+        .header-right {
+         display: flex;
+            position: absolute;
+            right: 20px;
+        }
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            color: #3e4555;
+            padding: 15px;
+            margin: 5px;
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+        }
+        .icon-btn:hover {
+            background: linear-gradient(to right, #ff4d7e, #ff6a5b);
+            color: white;
+            box-shadow: 0 4px 4px rgba(255, 77, 126, 0.5);
+            transform: scale(1.1);
+        }
+         .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - 100px);
+            flex-grow: 1;
+        }
+        .card {
+           background: linear-gradient(336deg, rgba(255, 77, 126, 0.5), rgba(255, 77, 126, 0) 40%);
+    padding: 50px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    width: 480px;
+    position: relative;
+    color: #ff4d7e;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .card img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ff4d7e;
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            font-weight: 600;
+            margin: 10px 0;
+            font-size: 24px;
+            color: #3e4555;
+        }
+
+        .card p {
+            font-size: 18px;
+            margin: 8px 0;
+            color: #3e4555;
+        }
+
+        .about-overlay {
+            position: absolute;
+            bottom: 10px;
+            left: 40px;
+            background: rgba(255, 77, 126, 0.1);
+            padding: 2px 15px; /* Увеличил padding для удобства */
+            border-radius: 12px;
+            font-size: 16px;
+            max-width: 85%;
+            backdrop-filter: blur(5px);
+            color: #ff4d7e;
+            border: none; /* Убирает окантовку */
+            cursor: pointer; /* Добавил курсор в виде указателя */
+            transition: all 0.2s ease-in-out; /* Плавные анимации */
+        }
+
+        .about-overlay:hover {
+            background: linear-gradient(to right, #ff4d7e, #ff6a5b); /* Эффект на фоне при наведении */
+            color: white; /* Цвет текста при наведении */
+            box-shadow: 0 4px 4px rgba(255, 77, 126, 0.5); /* Тень */
+            transform: scale(1.1); /* Легкое увеличение кнопки */
+        }
+
+         .sidebar {
+            width: 400px;
+            background: linear-gradient(100deg, rgba(255, 77, 126, 0) 0%, rgba(255, 77, 126, 0.2) 60%, rgba(255, 77, 126, 0) 100%);
+            padding: 20px;
+            margin-top: 100px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            height: 80vh;
+            overflow-y: auto;
+            position: fixed;
+            left: -150%;
+            transition: left 0.3s;
+            z-index: 1000;
+            border-radius: 20px;
+            color: #333333; /* Темно-серый цвет для текста */
+            font-family: "Montserrat", sans-serif; /* Шрифт по умолчанию */
+        }
+
+        .sidebar h3 {
+            font-size: 1.5rem;
+            color: #2c3e50; /* Темно-синий для заголовков */
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .sidebar p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555555; /* Светло-серый цвет для параграфов */
+            margin-bottom: 20px;
+        }
+
+         .sidebar.open {
+            display: block;
+            left: 10px;
+        }
+
+         .toggle-btn-card {
+            background: linear-gradient(to right, #ff4d7e, #ff6a5b);
+            border: none;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .toggle-btn-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #ff6a5b, #ff4d7e);
+            transition: left 0.8s ease-in-out;
+        }
+
+        .toggle-btn-card:hover::before {
+            left: 0;
+        }
+
+        .toggle-btn-card span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .toggle-btn-card:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(255, 77, 126, 0.5);
+        }
+        .heart {
+            width: 50px;
+            height: 50px;
+            position: fixed;
+            bottom: 20px;
+            right: 40px;
+            transform: rotate(-45deg) scale(0.7);
+            border: 4px solid #ff4d7e;
+            border-radius: 5px;
+            border-top-color: transparent;
+            border-right-color: transparent;
+            background: none;
+        }
+        .heart::before,
+        .heart::after {
+            content: "";
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            position: absolute;
+            border: 4px solid #ff4d7e;
+            border-bottom-color: transparent;
+            border-right-color: transparent;
+            background: none;
+        }
+        .heart::before {
+            top: -25px;
+            left: -4px;
+            transform: rotate(45deg);
+        }
+        .heart::after {
+            top: -4px;
+            left: 18px;
+            transform: rotate(135deg);
+        }
+
+        .heart-badge {
+            position: absolute;
+            top: 0px; /* Подкорректировал для центрирования */
+            right: 0px;
+            width: 36px; /* Чуть уменьшил, чтобы было гармоничнее */
+            height: 36px;
+            background: linear-gradient(to right, #ff4d7e, #ff6a5b);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(255, 77, 126, 0.5);
+            line-height: 1; /* Убирает возможные отступы у цифры */
+            text-align: center;
+            transform: rotate(45deg);
+        }
+        @keyframes heartbeat {
+            0% { transform: rotate(-45deg) scale(0.7); }
+            50% { transform: rotate(-45deg) scale(0.8); }
+            100% { transform: rotate(-45deg) scale(0.7); }
+        }
+
+        @keyframes sparkle {
+            0% { text-shadow: none; }
+            50% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 12px rgba(255, 255, 255, 0.6); }
+            100% { text-shadow: none; }
+        }
+
+        .heart:hover {
+            animation: heartbeat 0.6s infinite;
+        }
+
+        .heart-badge:hover {
+            animation: sparkle 1s infinite;
+        }
